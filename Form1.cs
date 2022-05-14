@@ -1,3 +1,9 @@
+// VERSIONS LIST
+// Latest production .NET Framework version: v0.9922
+// Latest production .NET Core version: HuoChessDV
+// Latest development .NET Framework version: v0.9923
+// Latest development .NET Core version: HuoChessDV2
+
 using System;
 using System.IO;
 using System.Windows.Forms;
@@ -2928,6 +2934,7 @@ namespace HuoChessDV
                         for (jjj = 0; jjj <= 7; jjj++)
                         {
                             //v0.980: Reduce all texts ("White King" for "Wh King", "White Knight" for "Wh Knight" and so on...)
+                            //v0.9923 improvement: Remove the (Who_Is_Analyzed.CompareTo("HY") == 0)!!!
                             if (((Who_Is_Analyzed.CompareTo("HY") == 0) && ((((Skakiera_Thinking[(iii), (jjj)].CompareTo("White King") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("White Queen") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("White Rook") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("White Knight") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("White Bishop") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("White Pawn") == 0)) && (m_PlayerColor.CompareTo("Black") == 0)) || (((Skakiera_Thinking[(iii), (jjj)].CompareTo("Black King") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("Black Queen") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("Black Rook") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("Black Knight") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("Black Bishop") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("Black Pawn") == 0)) && (m_PlayerColor.CompareTo("White") == 0)))) || ((Who_Is_Analyzed.CompareTo("Hu") == 0) && ((((Skakiera_Thinking[(iii), (jjj)].CompareTo("White King") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("White Queen") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("White Rook") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("White Knight") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("White Bishop") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("White Pawn") == 0)) && (m_PlayerColor.CompareTo("White") == 0)) || (((Skakiera_Thinking[(iii), (jjj)].CompareTo("Black King") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("Black Queen") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("Black Rook") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("Black Knight") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("Black Bishop") == 0) || (Skakiera_Thinking[(iii), (jjj)].CompareTo("Black Pawn") == 0)) && (m_PlayerColor.CompareTo("Black") == 0)))))
                             {
 
@@ -3169,8 +3176,9 @@ namespace HuoChessDV
                                         // v0.991: Have the stupid move or moving into dagerous sqaures generate penalty in the score (and NOT block them from analysis alltogether), so that all the moves are analyzed!
                                         // if ((ThisIsStupidMove.CompareTo("N") == 0) && (Skakiera_Dangerous_Squares[(m_FinishingColumnNumber - 1), (m_FinishingRank - 1)] == 0))
                                         // if ((Skakiera_Dangerous_Squares[(m_FinishingColumnNumber - 1), (m_FinishingRank - 1)] == 0))
-                                        if (1 == 1)
-                                        {
+                                        // v0.9923: Removed the if structure (may add if needed, in the future)
+                                        //if (1 == 1)
+                                        //{
                                             // THE HEART OF THE THINKING MECHANISM: Here the computer checks the moves
 
                                             // Validity and legality of the move will be checked in CheckMove (plus some additional checks for possible mate etc)
@@ -3193,6 +3201,7 @@ namespace HuoChessDV
                                                 // Store the initial move coordinates (at the node 0 level)
                                                 // v0.992: Store the initial move in another dedicated table with less size
                                                 //         (reduce the size of NodesAnalysis0 table)
+                                                // v0.9923 improvement: Use a different table for Best Moves. No need to have more dimensions at such huge tables.
                                                 NodesAnalysis0[NodeLevel_0_count, 2] = m_StartingColumnNumber_HY;
                                                 NodesAnalysis0[NodeLevel_0_count, 3] = m_FinishingColumnNumber_HY;
                                                 NodesAnalysis0[NodeLevel_0_count, 4] = m_StartingRank_HY;
@@ -3486,6 +3495,9 @@ namespace HuoChessDV
                                                 //}
                                                 #endregion ObsoleteCode
 
+                                                // ----------- QUICK WINS -----------------
+                                                // v0.9923 improvement: For possibility to Eat, the storing of the best move coordinates is not needed...
+
                                                 // -------------------------------------------------------
                                                 // Check if the computer can eat a piece of the opponent
                                                 // -------------------------------------------------------
@@ -3581,6 +3593,7 @@ namespace HuoChessDV
                                                     else if (m_PlayerColor.CompareTo("White") == 0)
                                                         m_WhichColorPlays = "White";
 
+                                                    // Call NEXT LEVEL of thinking
                                                     Analyze_Move_1_HumanMove(Skakiera_Move_After_0_new);
 
                                                     // v0.992: Switch BACK which colour plays.
@@ -3615,7 +3628,7 @@ namespace HuoChessDV
                                                 NodeLevel_0_count++;
                                             }
 
-                                        }
+                                        //} // The if(1 == 1) closes here
 
                                     }
                                 }
@@ -5408,10 +5421,12 @@ namespace HuoChessDV
                     }
                 }
 
+                // 2022-05-14 Fix: Replaced m_StartingColumnNumber etc variables with StartingCol etc variables in the checks for castling
+
                 // Big castling
-                if ((m_WhichColorPlays.CompareTo("White") == 0) && (m_StartingColumnNumber == 5) && (m_FinishingColumnNumber == 3) && (m_StartingRank == 1) && (m_FinishingRank == 1) && (White_Castling_Occured == false) && (White_King_Moved == false))
+                if ((m_WhichColorPlays.CompareTo("White") == 0) && (startColumn == 5) && (finishColumn == 3) && (startRank == 1) && (finishRank == 1) && (White_Castling_Occured == false) && (White_King_Moved == false))
                 {
-                    if ((ENSkakiera[(m_StartingColumnNumber - 1), (m_StartingRank - 1)].CompareTo("White King") == 0) && (ENSkakiera[(0), (0)].CompareTo("White Rook") == 0) && (ENSkakiera[(1), (0)].CompareTo("") == 0) && (ENSkakiera[(2), (0)].CompareTo("") == 0) && (ENSkakiera[(3), (0)].CompareTo("") == 0))
+                    if ((ENSkakiera[(startColumn - 1), (startRank - 1)].CompareTo("White King") == 0) && (ENSkakiera[(0), (0)].CompareTo("White Rook") == 0) && (ENSkakiera[(1), (0)].CompareTo("") == 0) && (ENSkakiera[(2), (0)].CompareTo("") == 0) && (ENSkakiera[(3), (0)].CompareTo("") == 0))
                     {
                         //m_OrthotitaKinisis = true;
                         m_NomimotitaKinisis = true;
@@ -5423,9 +5438,9 @@ namespace HuoChessDV
                 // Black castling
 
                 // Small castling
-                if ((m_WhichColorPlays.CompareTo("Black") == 0) && (m_StartingColumnNumber == 5) && (m_FinishingColumnNumber == 7) && (m_StartingRank == 8) && (m_FinishingRank == 8) && (Black_Castling_Occured == false) && (Black_King_Moved == false))
+                if ((m_WhichColorPlays.CompareTo("Black") == 0) && (startColumn == 5) && (finishColumn == 7) && (startRank == 8) && (finishRank == 8) && (Black_Castling_Occured == false) && (Black_King_Moved == false))
                 {
-                    if ((ENSkakiera[(m_StartingColumnNumber - 1), (m_StartingRank - 1)].CompareTo("Black King") == 0) && (ENSkakiera[(7), (7)].CompareTo("Black Rook") == 0) && (ENSkakiera[(5), (7)].CompareTo("") == 0) && (ENSkakiera[(6), (7)].CompareTo("") == 0))
+                    if ((ENSkakiera[(startColumn - 1), (startRank - 1)].CompareTo("Black King") == 0) && (ENSkakiera[(7), (7)].CompareTo("Black Rook") == 0) && (ENSkakiera[(5), (7)].CompareTo("") == 0) && (ENSkakiera[(6), (7)].CompareTo("") == 0))
                     {
                         //m_OrthotitaKinisis = true;
                         m_NomimotitaKinisis = true;
@@ -5437,9 +5452,9 @@ namespace HuoChessDV
                 }
 
                 // Big castling
-                if ((m_WhichColorPlays.CompareTo("Black") == 0) && (m_StartingColumnNumber == 5) && (m_FinishingColumnNumber == 3) && (m_StartingRank == 8) && (m_FinishingRank == 8) && (Black_Castling_Occured == false) && (Black_King_Moved == false))
+                if ((m_WhichColorPlays.CompareTo("Black") == 0) && (startColumn == 5) && (finishColumn == 3) && (startRank == 8) && (finishRank == 8) && (Black_Castling_Occured == false) && (Black_King_Moved == false))
                 {
-                    if ((ENSkakiera[(m_StartingColumnNumber - 1), (m_StartingRank - 1)].CompareTo("Black King") == 0) && (ENSkakiera[(0), (7)].CompareTo("Black Rook") == 0) && (ENSkakiera[(1), (7)].CompareTo("") == 0) && (ENSkakiera[(2), (7)].CompareTo("") == 0) && (ENSkakiera[(3), (7)].CompareTo("") == 0))
+                    if ((ENSkakiera[(startColumn - 1), (startRank - 1)].CompareTo("Black King") == 0) && (ENSkakiera[(0), (7)].CompareTo("Black Rook") == 0) && (ENSkakiera[(1), (7)].CompareTo("") == 0) && (ENSkakiera[(2), (7)].CompareTo("") == 0) && (ENSkakiera[(3), (7)].CompareTo("") == 0))
                     {
                         //m_OrthotitaKinisis = true;
                         m_NomimotitaKinisis = true;
@@ -6863,6 +6878,7 @@ namespace HuoChessDV
                                         #endregion MoveText
 
                                         // Do the move
+
                                         // v0.990: ProsorinoKommati -> ProsorinoKommati1, MovingPiece -> MovingPiece1
                                         // v0.992: Obsolete - ProsorinoKommati1 is already set above.
                                         ProsorinoKommati1 = Skakiera_Human_Thinking_2[(m_FinishingColumnNumber1 - 1), (m_FinishingRank1 - 1)];
@@ -6904,7 +6920,7 @@ namespace HuoChessDV
 
                                         //v0.992: Store the variant text
                                         //NodesAnalysis1_MoveText[NodeLevel_1_count] = String.Concat(Move0_text, " , ",
-                                        //                                                           Move1_text);
+                                        //                                                            Move1_text);
 
                                         #region WriteLog
                                         ////v0.990
@@ -6972,6 +6988,9 @@ namespace HuoChessDV
                                         //    }
                                         //}
                                         #endregion WriteLog
+
+                                        //v0.9923 improvement: This if (Move_Analyzed < Thinking_Depth) is not needed.
+                                        // But perhaps better to keep it for clarity and readability purposes.
 
                                         if (Move_Analyzed < Thinking_Depth)
                                         // Trim the tree
@@ -7692,6 +7711,7 @@ namespace HuoChessDV
                                         //huo_sw1.WriteLine(String.Concat("[Point 5] -> Σκακιέρα[5,1] = ", Skakiera_Thinking_HY_2[4, 0].ToString()));
 
                                         // Do the move
+
                                         // v0.990: ProsorinoKommati -> ProsorinoKommati2, MovingPiece -> MovingPiece2
                                         // v0.992: Obsolete. The ProsorinoKommati2 is already defined above.
                                         ProsorinoKommati2 = Skakiera_Thinking_HY_2[(m_FinishingColumnNumber2 - 1), (m_FinishingRank2 - 1)];
@@ -7715,6 +7735,7 @@ namespace HuoChessDV
                                         #endregion ObsoleteCode
 
                                         // Count the score of the move
+
                                         // v0.980: Removed humanDangerParameter from every call of CountScore
                                         Temp_Score_Move_2 = CountScore(Skakiera_Thinking_HY_2);
 
@@ -7845,8 +7866,8 @@ namespace HuoChessDV
 
                                         // If you have reached the Thinking Depth... do nothing! :)
                                         // Anyway all scores and parents in the nodes are already saved at each level of thought.
-                                        if (Move_Analyzed == Thinking_Depth)
-                                        {
+                                        //if (Move_Analyzed == Thinking_Depth)
+                                        //{
                                             // [MiniMax algorithm - skakos]
                                             // Record the node in the Nodes Analysis array (to use with MiniMax algorithm) skakos
 
@@ -8020,7 +8041,7 @@ namespace HuoChessDV
                                             //    Nodes_Total_count = 1000000;
                                             //}
                                             #endregion toRemove
-                                        }
+                                        //}
 
                                         #region toRemove
                                         //huo_sw1.WriteLine(String.Concat("[Point 7] -> Σκακιέρα[5,1] = ", Skakiera_Thinking_HY_2[4, 0].ToString()));

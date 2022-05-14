@@ -1132,7 +1132,7 @@ namespace HuoChessDV
             this.Controls.Add(this.pictureBoxA1);
             this.Controls.Add(this.pictureBox1);
             this.Name = "Form1";
-            this.Text = "HuoChessDV - Developers edition";
+            this.Text = "HuoChessDV 2 - Developers edition";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxA1)).EndInit();
